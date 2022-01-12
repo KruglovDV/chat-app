@@ -1,0 +1,37 @@
+{
+  "name": "chat-app",
+  "version": "1.0.0",
+  "description": "test project",
+  "main": "src/index.js",
+  "type": "module",
+  "scripts": {
+    "test": "test",
+    "eslint": "eslint .",
+    "eslint-fix": "eslint --fix .",
+    "dev": "env-cmd -f config/dev.env nodemon --ignore public,chat -e js,hbs,css",
+    "dev-front": "webpack --watch",
+    "start": "env-cmd -f config/prod.env node src/index.js"
+  },
+  "author": "Dmitry Kruglov",
+  "license": "ISC",
+  "dependencies": {
+    "env-cmd": "^10.1.0",
+    "express": "^4.17.2",
+    "hbs": "^4.2.0",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.16.7",
+    "@babel/preset-env": "^7.16.8",
+    "@babel/preset-react": "^7.16.7",
+    "babel-loader": "^8.2.3",
+    "connect-livereload": "^0.6.1",
+    "eslint": "^8.6.0",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-plugin-import": "^2.25.4",
+    "livereload": "^0.9.3",
+    "webpack": "^5.66.0",
+    "webpack-cli": "^4.9.1"
+  }
+}
