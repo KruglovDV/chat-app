@@ -15,11 +15,11 @@ const startApp = async () => {
   const app = express();
 
   if (NODE_ENV === 'development') {
-    const livereload = await import('livereload');
-    const { default: connectLivereload } = await import('connect-livereload');
+    const livereload = await import('livereload'); // eslint-disable-line
+    const { default: connectLivereload } = await import('connect-livereload'); // eslint-disable-line
 
     const liveReloadServer = livereload.createServer();
-    liveReloadServer.watch(path.join(__dirname, 'public'))
+    liveReloadServer.watch(path.join(__dirname, 'public'));
     liveReloadServer.server.once('connection', () => {
       setTimeout(() => {
         liveReloadServer.refresh('/chat');
