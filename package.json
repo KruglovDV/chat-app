@@ -15,11 +15,18 @@
   "author": "Dmitry Kruglov",
   "license": "ISC",
   "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "connect-mongo": "^4.6.0",
     "env-cmd": "^10.1.0",
     "express": "^4.17.2",
+    "express-session": "^1.17.2",
     "hbs": "^4.2.0",
+    "mongoose": "^6.1.6",
+    "multer": "^1.4.4",
     "react": "^17.0.2",
-    "react-dom": "^17.0.2"
+    "react-dom": "^17.0.2",
+    "sharp": "^0.29.3",
+    "validator": "^13.7.0"
   },
   "devDependencies": {
     "@babel/core": "^7.16.7",
