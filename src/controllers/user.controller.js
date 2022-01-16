@@ -1,6 +1,6 @@
 import express from 'express';
-import multer from 'multer';
-import sharp from 'sharp';
+// import multer from 'multer';
+// import sharp from 'sharp';
 
 import User from '../models/user.js';
 
@@ -33,9 +33,9 @@ router.post('/login', async (req, res) => {
     const user = await User.findByCredentials(email, password);
     req.session.userId = user._id;
     res.redirect('/');
-  } catch(error) {
+  } catch (error) {
     res.status(422);
-    res.render('templates/login', {error: ''});
+    res.render('templates/login', { error: '' });
   }
 });
 
@@ -43,6 +43,6 @@ router.delete('/logout', (req, res) => {
   req.session.destroy(() => {
     res.redirect('/');
   });
-})
+});
 
 export default router;

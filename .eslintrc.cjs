@@ -15,4 +15,7 @@ module.exports = {
     'no-underscore-dangle': 0,
     'import/extensions': 'off'
   },
+  globals: {
+    'io': true
+  }
 };

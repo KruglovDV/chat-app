@@ -6,7 +6,7 @@ const userSchema = new mongoose.Schema({
   name: {
     required: true,
     type: String,
-    trim: true
+    trim: true,
   },
   email: {
     unique: true,
@@ -18,7 +18,7 @@ const userSchema = new mongoose.Schema({
       if (!validator.isEmail(value)) {
         throw new Error('Email must be a valid');
       }
-    }
+    },
   },
   password: {
     type: String,
@@ -45,6 +45,7 @@ userSchema.statics.findByCredentials = async (email, password) => {
   return user;
 };
 
+// eslint-disable-next-line func-names
 userSchema.pre('save', async function (next) {
   const user = this;
 
