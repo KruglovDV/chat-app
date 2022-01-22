@@ -67,7 +67,7 @@ const startApp = async () => {
 
   app.use(rootController);
   app.use(userController);
-  app.use(chatController)
+  app.use(chatController);
 
   app.get('*', (req, res) => { // должен быть самым последним обработчиком
     res.send('404');

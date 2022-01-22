@@ -1,53 +1,62 @@
-import React from "react";
+import React from 'react';
+import MessagesList from './MessagesList.jsx';
+import MessageForm from './MessageForm.jsx';
 
 const Chat = () => {
   const socketRef = React.useRef(null);
-  const [formState, setFormState] = React.useState('idle');
-  const [message, setMessage] = React.useState('');
+  const [allMessages, setMessages] = React.useState([]);
+  const [currentUserId, setCurrentUserId] = React.useState(null);
+
+  const handleInit = React.useCallback(({ messages, userId }) => {
+    setMessages(messages);
+    setCurrentUserId(userId);
+  }, []);
+
+  const handleMessage = React.useCallback((message) => {
+    setMessages((prevMessages) => ([...prevMessages, message]));
+  }, []);
 
   React.useEffect(() => {
     const socket = io();
     socketRef.current = socket;
-    socket.on('initialization', console.log);
-    socket.on('user connected', console.log);
-    socket.on('message', console.log);
+    socket.on('init', handleInit);
+    socket.on('user:connected', console.log);
+    socket.on('user:disconnected', console.log);
+    socket.on('message:get', handleMessage);
     return () => {
       socket.disconnect();
     }
   },[]);
 
-  const handleChangeMessage = React.useCallback((event) => {
-    setMessage(event.target.value)
-  }, []);
-
-  const handleSubmitMessage = React.useCallback((event) => {
-    event.preventDefault();
-    const trimmedMessage = message.trim();
-    if (!trimmedMessage) {
-      return;
-    }
-    setMessage('');
-    setFormState('submitting');
-    socketRef.current.emit('message', trimmedMessage, (error) => {
-      setFormState('idle');
+  const sendMessage = React.useCallback((messageText) => {
+    socketRef.current.emit('message:send', messageText, (error) => {
       if (error) {
         console.log(error);
         return;
       }
       console.log('message sent');
     });
-  }, [message]);
+  }, []);
 
-  const isFormSubmitting = React.useMemo(() => {
-    return formState === 'submitting'
-  }, [formState]);
+  const handleSubmitMessage = React.useCallback((message, event) => {
+    event.preventDefault();
+    const trimmedMessage = message.trim();
 
-  return <div>
-    <form onSubmit={handleSubmitMessage}>
-      <input onChange={handleChangeMessage} value={message} />
-      <button disabled={isFormSubmitting}>send</button>
-    </form>
-  </div>;
+    if (!trimmedMessage) {
+      return;
+    }
+    sendMessage(trimmedMessage);
+    setMessages([...allMessages, { userId: currentUserId, text: message }]);
+  }, [allMessages, currentUserId, sendMessage]);
+
+  return (
+    <div>
+      <div>
+        <MessagesList messages={allMessages} />
+      </div>
+      <MessageForm onSubmit={handleSubmitMessage} />
+    </div>
+  );
 };
 
 export default Chat;

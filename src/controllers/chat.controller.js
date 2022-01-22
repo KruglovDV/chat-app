@@ -6,18 +6,19 @@ export const router = new express.Router();
 
 router.get('/chat', auth, (req, res) => {
   res.render('templates/chat');
-})
+});
 
 export const chatSocketController = (io) => (socket) => {
-  socket.emit('initialization', {});
-  socket.broadcast.emit('user connected', 'user connected');
+  const { userId } = socket.handshake.session;
+  socket.emit('init', { messages: [], userId });
+  socket.broadcast.emit('user:connected', { userId });
 
   socket.on('disconnect', () => {
-    console.log('user disconnected');
+    socket.broadcast.emit('user:disconnected', { userId });
   });
 
-  socket.on('message', (message, acknowledge) => {
-    socket.broadcast.emit('message', message);
+  socket.on('message:send', (messageText, acknowledge) => {
+    socket.broadcast.emit('message:get', { userId, text: messageText });
     acknowledge();
   });
 };
