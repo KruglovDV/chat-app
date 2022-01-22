@@ -2,6 +2,7 @@ import React from "react";
 
 const Chat = () => {
   const socketRef = React.useRef(null);
+  const [formState, setFormState] = React.useState('idle');
   const [message, setMessage] = React.useState('');
 
   React.useEffect(() => {
@@ -21,8 +22,14 @@ const Chat = () => {
 
   const handleSubmitMessage = React.useCallback((event) => {
     event.preventDefault();
+    const trimmedMessage = message.trim();
+    if (!trimmedMessage) {
+      return;
+    }
     setMessage('');
-    socketRef.current.emit('message', message, (error) => {
+    setFormState('submitting');
+    socketRef.current.emit('message', trimmedMessage, (error) => {
+      setFormState('idle');
       if (error) {
         console.log(error);
         return;
@@ -31,10 +38,14 @@ const Chat = () => {
     });
   }, [message]);
 
+  const isFormSubmitting = React.useMemo(() => {
+    return formState === 'submitting'
+  }, [formState]);
+
   return <div>
     <form onSubmit={handleSubmitMessage}>
       <input onChange={handleChangeMessage} value={message} />
-      <button>send</button>
+      <button disabled={isFormSubmitting}>send</button>
     </form>
   </div>;
 };

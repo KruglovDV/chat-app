@@ -9,9 +9,9 @@ import MongoStore from 'connect-mongo';
 import { Server } from 'socket.io';
 import sharedSession from 'express-socket.io-session';
 
-import auth from './auth.js';
+import { router as rootController } from './controllers/index.js';
 import userController from './controllers/user.controller.js';
-import chatController from './controllers/chat.controller.js';
+import { chatSocketController, router as chatController } from './controllers/chat.controller.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -64,22 +64,16 @@ const startApp = async () => {
   app.use(sess);
   app.use(express.urlencoded({ extended: true }));
   app.use(express.static(STATIC_PATH));
+
+  app.use(rootController);
   app.use(userController);
+  app.use(chatController)
 
-  // TODO move to separate file
-  app.get('/', auth, (req, res) => {
-    res.render('templates/index');
-  });
-
-  // TODO move to separate file
-  app.get('/chat', auth, (req, res) => {
-    res.render('templates/chat');
-  });
   app.get('*', (req, res) => { // должен быть самым последним обработчиком
     res.send('404');
   });
 
-  io.on('connection', chatController(io));
+  io.on('connection', chatSocketController(io));
 
   server.listen(PORT, () => {
     // eslint-disable-next-line no-console
