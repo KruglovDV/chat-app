@@ -2,6 +2,14 @@ import React from 'react';
 import MessagesList from './MessagesList.jsx';
 import MessageForm from './MessageForm.jsx';
 
+const getRoomName = () => {
+  return decodeURI(window.location.pathname.split('/')[2]);
+}
+
+const makeMessage = (user, room, text) => {
+  return { user, room, text, createdAt: new Date() };
+};
+
 const Chat = () => {
   const socketRef = React.useRef(null);
   const [allMessages, setMessages] = React.useState([]);
@@ -17,7 +25,7 @@ const Chat = () => {
   }, []);
 
   React.useEffect(() => {
-    const socket = io();
+    const socket = io({ query: `room=${getRoomName()}` });
     socketRef.current = socket;
     socket.on('init', handleInit);
     socket.on('user:connected', console.log);
@@ -28,8 +36,8 @@ const Chat = () => {
     }
   },[]);
 
-  const sendMessage = React.useCallback((messageText) => {
-    socketRef.current.emit('message:send', messageText, (error) => {
+  const sendMessage = React.useCallback((message) => {
+    socketRef.current.emit('message:send', message, (error) => {
       if (error) {
         console.log(error);
         return;
@@ -38,15 +46,17 @@ const Chat = () => {
     });
   }, []);
 
-  const handleSubmitMessage = React.useCallback((message, event) => {
+  const handleSubmitMessage = React.useCallback((messageText, event) => {
     event.preventDefault();
-    const trimmedMessage = message.trim();
+    const trimmedMessageText = messageText.trim();
 
-    if (!trimmedMessage) {
+    if (!trimmedMessageText) {
       return;
     }
-    sendMessage(trimmedMessage);
-    setMessages([...allMessages, { userId: currentUserId, text: message }]);
+
+    const message =  makeMessage(currentUserId, getRoomName(), trimmedMessageText);
+    sendMessage(message);
+    setMessages([...allMessages, message]);
   }, [allMessages, currentUserId, sendMessage]);
 
   return (

@@ -9,9 +9,9 @@ import MongoStore from 'connect-mongo';
 import { Server } from 'socket.io';
 import sharedSession from 'express-socket.io-session';
 
-import { router as rootController } from './controllers/index.js';
+import rootController from './controllers/index.js';
 import userController from './controllers/user.controller.js';
-import { chatSocketController, router as chatController } from './controllers/chat.controller.js';
+import { roomSocketController, router as roomController } from './controllers/room.controller.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -50,7 +50,7 @@ const startApp = async () => {
     liveReloadServer.watch(path.join(__dirname, 'public'));
     liveReloadServer.server.once('connection', () => {
       setTimeout(() => {
-        liveReloadServer.refresh('/chat');
+        liveReloadServer.refresh('/room');
       }, 100);
     });
     app.use(connectLivereload());
@@ -67,13 +67,13 @@ const startApp = async () => {
 
   app.use(rootController);
   app.use(userController);
-  app.use(chatController);
+  app.use(roomController);
 
   app.get('*', (req, res) => { // должен быть самым последним обработчиком
     res.send('404');
   });
 
-  io.on('connection', chatSocketController(io));
+  io.on('connection', roomSocketController(io));
 
   server.listen(PORT, () => {
     // eslint-disable-next-line no-console

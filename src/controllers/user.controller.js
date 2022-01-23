@@ -16,7 +16,6 @@ router.post('/signup', async (req, res) => {
     await user.save();
     res.redirect('/login');
   } catch (error) {
-    console.log(error);
     res.status(422);
     res.render('templates/signup', { errors: error.errors, ...req.body });
   }

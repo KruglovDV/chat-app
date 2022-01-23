@@ -1,0 +1,9 @@
+<div>
+    <form method="post" action="/createRoom">
+        <input type="text" {{#if values.name}}value={{values.name}}{{/if}} name="name" />
+        <button>create room</button>
+        {{#if errors.name}}
+            <div>{{errors.name}}</div>
+        {{/if}}
+    </form>
+</div>
