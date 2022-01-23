@@ -43,7 +43,7 @@ const getUserId = (socket) => socket.handshake.session.userId;
 
 const getRoom = (socket) => socket.request._query.room;
 
-const messageSendController = (socket) => async (message, acknowledge) => {
+const handleSendMessage = (socket) => async (message, acknowledge) => {
   try {
     const room = await Room.findOne({ name: message.room });
     const { user, text } = message;
@@ -82,5 +82,5 @@ const handleDisconnected = (socket) => () => {
 export const roomSocketController = () => async (socket) => {
   handleConnected(socket);
   socket.on('disconnect', handleDisconnected(socket));
-  socket.on('message:send', messageSendController(socket));
+  socket.on('message:send', handleSendMessage(socket));
 };
