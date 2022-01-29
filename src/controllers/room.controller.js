@@ -25,9 +25,9 @@ router.post('/createRoom', auth, async (req, res) => {
     await room.save();
     res.status(201).redirect('/rooms');
   } catch (error) {
-    const errors = {};
+    const errors = error?.errors ?? {};
     if (error.code === 11000) {
-      errors.name = 'name must be unique';
+      errors.name = { message: 'name must be unique' };
     }
     res
       .status(400)

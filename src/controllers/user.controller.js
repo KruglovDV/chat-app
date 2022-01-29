@@ -16,8 +16,13 @@ router.post('/signup', async (req, res) => {
     await user.save();
     res.redirect('/login');
   } catch (error) {
+    const errors = error?.errors ?? {};
+    if (error.code === 11000) {
+      errors.email = {  message: 'email already exists' };
+    }
     res.status(422);
-    res.render('templates/signup', { errors: error.errors, ...req.body });
+
+    res.render('templates/signup', { errors, ...req.body, values: req.body });
   }
 });
 
@@ -34,11 +39,18 @@ router.post('/login', async (req, res) => {
     res.redirect('/');
   } catch (error) {
     res.status(422);
-    res.render('templates/login', { error: '' });
+    res.render(
+      'templates/login',
+      { error: 'invalid credentials', values: req.body }
+    );
   }
 });
 
-router.delete('/logout', (req, res) => {
+router.get('/logout', (req, res) => {
+  res.render('templates/logout');
+});
+
+router.post('/logout', (req, res) => {
   req.session.destroy(() => {
     res.redirect('/');
   });

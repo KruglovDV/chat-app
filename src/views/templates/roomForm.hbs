@@ -1,9 +1,19 @@
-<div>
-    <form method="post" action="/createRoom">
-        <input type="text" {{#if values.name}}value={{values.name}}{{/if}} name="name" />
-        <button>create room</button>
-        {{#if errors.name}}
-            <div>{{errors.name}}</div>
-        {{/if}}
-    </form>
+{{>header }}
+<div class="container h-100">
+    <div class="row h-100 justify-content-center align-items-center">
+        <div class="col-10 col-md-8 col-lg-6">
+            <form method="post" action="/createRoom">
+                <div class="mb-3">
+                    <label for="exampleInputName1" class="form-label">Room name</label>
+                    <input {{#if values.name}}value={{values.name}}{{/if}} type="text" name="name" class="form-control {{#if errors.name}}is-invalid{{/if}}" id="exampleInputName1" aria-describedby="nameHelp">
+                    {{#if errors.name}}
+                        <div id="validationServer05Feedback" class="invalid-feedback">
+                            {{errors.name.message}}
+                        </div>
+                    {{/if}}
+                </div>
+                <button type="submit" class="btn btn-primary">Create room</button>
+            </form>
+        </div>
+    </div>
 </div>

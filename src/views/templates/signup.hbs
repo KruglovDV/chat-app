@@ -1,8 +1,36 @@
-<div>
-    <form method="post" action="/signup">
-        <input type="text" name="name" />
-        <input type="email" name="email" />
-        <input type="password" name="password" />
-        <button>signup</button>
-    </form>
+<div class="container h-100">
+    <div class="row h-100 justify-content-center align-items-center">
+        <div class="col-10 col-md-8 col-lg-6">
+            <form method="post" action="/signup">
+                <div class="mb-3">
+                    <label for="exampleInputName1" class="form-label">Name</label>
+                    <input {{#if values.name}}value={{values.name}}{{/if}} type="text" name="name" class="form-control {{#if errors.name}}is-invalid{{/if}}" id="exampleInputName1">
+                    {{#if errors.name}}
+                        <div id="validationServer05Feedback" class="invalid-feedback">
+                            {{errors.name.message}}
+                        </div>
+                    {{/if}}
+                </div>
+                <div class="mb-3">
+                    <label for="exampleInputEmail1" class="form-label">Email address</label>
+                    <input {{#if values.email}}value={{values.email}}{{/if}} type="email" name="email" class="form-control {{#if errors.email}}is-invalid{{/if}}" id="exampleInputEmail1" aria-describedby="emailHelp">
+                    {{#if errors.email}}
+                        <div id="validationServer05Feedback" class="invalid-feedback">
+                            {{errors.email.message}}
+                        </div>
+                    {{/if}}
+                </div>
+                <div class="mb-3">
+                    <label for="exampleInputPassword1" class="form-label">Password</label>
+                    <input type="password" name="password" class="form-control {{#if errors.password}}is-invalid{{/if}}" id="exampleInputPassword1">
+                    {{#if errors.password}}
+                        <div id="validationServer05Feedback" class="invalid-feedback">
+                            {{errors.password.message}}
+                        </div>
+                    {{/if}}
+                </div>
+                <button type="submit" class="btn btn-primary">Sign up</button> <a href="/login" class="link-primary m-3">Login</a>
+            </form>
+        </div>
+    </div>
 </div>
