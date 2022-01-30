@@ -45,6 +45,11 @@ userSchema.statics.findByCredentials = async (email, password) => {
   return user;
 };
 
+userSchema.methods.toJSON = function () {
+  const { email, name } = this;
+  return { email, name };
+};
+
 // eslint-disable-next-line func-names
 userSchema.pre('save', async function (next) {
   const user = this;

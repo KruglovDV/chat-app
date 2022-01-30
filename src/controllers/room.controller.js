@@ -3,6 +3,7 @@ import express from 'express';
 import Room from '../models/room.js';
 import Message from '../models/message.js';
 import auth from '../auth.js';
+import User from '../models/user.js';
 
 export const router = new express.Router();
 
@@ -51,9 +52,10 @@ const handleSendMessage = (socket) => async (message, acknowledge) => {
       acknowledge({ error: 'room not found' });
       return;
     }
-    const createdMessage = new Message({ user, text, room: room._id });
+    const createdMessage = new Message({ user: user.userId, text, room: room._id });
     await createdMessage.save();
-    socket.broadcast.to(room.name).emit('message:get', createdMessage);
+    const messageWithUser = await createdMessage.populate('user');
+    socket.broadcast.to(room.name).emit('message:get', messageWithUser);
     acknowledge();
   } catch (error) {
     acknowledge(error);
@@ -63,14 +65,18 @@ const handleSendMessage = (socket) => async (message, acknowledge) => {
 const handleConnected = async (socket) => {
   const roomName = getRoom(socket);
   const userId = getUserId(socket);
+  const targetUser = await User.findById(userId);
   const room = await Room.findOne({ name: roomName });
-  if (!room) {
+  if (!room || !targetUser) {
     return;
   }
-  const messages = await Message.find({ room: room._id }).sort({ createdAt: -1 }).limit(20) ?? [];
+  const user = { name: targetUser.name, userId };
+  const messages = await Message.find({ room: room._id }).populate('user').sort({ createdAt: -1 }).limit(5) ?? [];
   socket.join(room.name);
-  socket.emit('init', { messages: messages.reverse(), userId });
-  socket.broadcast.to(room.name).emit('user:connected', { userId });
+  socket.emit('init', { messages: messages.reverse(), user });
+  socket.broadcast
+    .to(room.name)
+    .emit('user:connected', { user });
 };
 
 const handleDisconnected = (socket) => () => {
@@ -79,7 +85,7 @@ const handleDisconnected = (socket) => () => {
   socket.broadcast.to(room).emit('user:disconnected', { userId });
 };
 
-export const roomSocketController = () => async (socket) => {
+export const roomSocketController = () => (socket) => {
   handleConnected(socket);
   socket.on('disconnect', handleDisconnected(socket));
   socket.on('message:send', handleSendMessage(socket));

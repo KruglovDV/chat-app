@@ -15,8 +15,10 @@ const MessageForm = (props) => {
 
   return (
     <form onSubmit={handleSubmit}>
-      <input onChange={handleChangeMessage} value={message} />
-      <button>send</button>
+      <div className="input-group mb-3">
+        <button className="btn btn-outline-secondary" type="submit" id="button-addon1">Send</button>
+        <input onChange={handleChangeMessage} value={message} type="text" className="form-control" placeholder="Enter text here..." />
+      </div>
     </form>
   );
 };

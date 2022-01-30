@@ -7,17 +7,18 @@ const getRoomName = () => {
 }
 
 const makeMessage = (user, room, text) => {
-  return { user, room, text, createdAt: new Date() };
+  const date = new Date();
+  return { user, room, text, createdAt: date, updatedAt: date };
 };
 
 const Chat = () => {
   const socketRef = React.useRef(null);
   const [allMessages, setMessages] = React.useState([]);
-  const [currentUserId, setCurrentUserId] = React.useState(null);
+  const [currentUser, setCurrentUser] = React.useState(null);
 
-  const handleInit = React.useCallback(({ messages, userId }) => {
+  const handleInit = React.useCallback(({ messages, user }) => {
     setMessages(messages);
-    setCurrentUserId(userId);
+    setCurrentUser(user);
   }, []);
 
   const handleMessage = React.useCallback((message) => {
@@ -54,17 +55,25 @@ const Chat = () => {
       return;
     }
 
-    const message =  makeMessage(currentUserId, getRoomName(), trimmedMessageText);
+    const message = makeMessage(currentUser, getRoomName(), trimmedMessageText);
     sendMessage(message);
     setMessages([...allMessages, message]);
-  }, [allMessages, currentUserId, sendMessage]);
+  }, [allMessages, currentUser, sendMessage]);
 
   return (
-    <div>
-      <div>
-        <MessagesList messages={allMessages} />
+    <div className="container h-100">
+      <div className="row h-100 justify-content-center align-items-center">
+        <div
+          className="col-10 col-md-8 col-lg-6 h-100"
+          style={{
+            display: 'flex',
+            flexDirection: 'column'
+          }}
+        >
+          <MessagesList messages={allMessages} />
+          <MessageForm onSubmit={handleSubmitMessage} />
       </div>
-      <MessageForm onSubmit={handleSubmitMessage} />
+      </div>
     </div>
   );
 };
