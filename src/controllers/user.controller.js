@@ -18,7 +18,7 @@ router.post('/signup', async (req, res) => {
   } catch (error) {
     const errors = error?.errors ?? {};
     if (error.code === 11000) {
-      errors.email = {  message: 'email already exists' };
+      errors.email = { message: 'email already exists' };
     }
     res.status(422);
 
@@ -41,7 +41,7 @@ router.post('/login', async (req, res) => {
     res.status(422);
     res.render(
       'templates/login',
-      { error: 'invalid credentials', values: req.body }
+      { error: 'invalid credentials', values: req.body },
     );
   }
 });

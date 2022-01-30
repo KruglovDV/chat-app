@@ -45,6 +45,7 @@ userSchema.statics.findByCredentials = async (email, password) => {
   return user;
 };
 
+// eslint-disable-next-line func-names
 userSchema.methods.toJSON = function () {
   const { email, name } = this;
   return { email, name };
